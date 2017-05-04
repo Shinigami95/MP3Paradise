@@ -146,7 +146,6 @@ public class ReproductorActivity extends AppCompatActivity
 
         repeatState = NO_REPETIR;
         esAleatorio = false;
-
         selectedFile = (TextView) findViewById(R.id.selecteditem);
 
         prev = (ImageButton)findViewById(R.id.previous);
