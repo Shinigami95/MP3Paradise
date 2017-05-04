@@ -156,6 +156,7 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickPrev(v);
             }
         });
+        
         play = (ImageButton)findViewById(R.id.play);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +164,7 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickPlay(v);
             }
         });
+
         next = (ImageButton)findViewById(R.id.next);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +172,7 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickNext(v);
             }
         });
+
         repeat = (ImageButton)findViewById(R.id.bt_repeat);
         repeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,6 +180,7 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickRepeat(v);
             }
         });
+
         rand = (ImageButton)findViewById(R.id.bt_random);
         rand.setOnClickListener(new View.OnClickListener() {
             @Override
