@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="superBlue">#0000ff</color>
+    <color name="nanoBlue">#0077ff</color>
     <color name="miniBlue">#00ccff</color>
+    <color name="white">#ffffff</color>
 </resources>

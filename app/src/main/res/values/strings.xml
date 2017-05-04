@@ -23,4 +23,20 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="tab_canciones">Songs</string>
+    <string name="tab_listas">Lists</string>
+    <string name="tab_downloads">Downloads</string>
+
+    <string name="tv_no_file">File not selected</string>
+    <string name="tv_select_list">Select list:</string>
+
+    <string name="random_yes">Random reproduction</string>
+    <string name="random_no">Sequential reproduction</string>
+
+    <string name="rep_todas">Repetir todas</string>
+    <string name="rep_no">No repetir</string>
+    <string name="rep_cancion">Repetir canción</string>
+
+
 </resources>

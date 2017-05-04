@@ -3,17 +3,12 @@ package com.api.mp3paradise;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.SeekBar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login(View v){
+        if(requestPerms()){
+            return;
+        }
         EditText etUser = (EditText) findViewById(R.id.et_user_login);
         EditText etPass = (EditText) findViewById(R.id.et_pass_login);
         String user = etUser.getText().toString();
@@ -47,11 +45,29 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this,ReproductorActivity.class);
             i.putExtra("user",user);
             startActivity(i);
+            finish();
         }
     }
 
     private void register(View v){
+        if(requestPerms()){
+            return;
+        }
         Intent i = new Intent(this,RegisterActivity.class);
         startActivity(i);
+    }
+
+    private boolean requestPerms(){
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            }
+
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+            return true;
+        }
+        return false;
     }
 }

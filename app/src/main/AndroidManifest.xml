@@ -19,8 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ReproductorActivity" />
+        <activity android:name=".ReproductorActivity2" />
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".ReproductorActivity"></activity>
     </application>
 
 </manifest>
