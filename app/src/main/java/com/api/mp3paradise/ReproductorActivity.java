@@ -156,7 +156,7 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickPrev(v);
             }
         });
-        
+
         play = (ImageButton)findViewById(R.id.play);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
