@@ -127,8 +127,21 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
 
     private void playCancion(AdapterView<?> parent, View view, int position, long id) {
         String path = (String) view.getTag();
-        String[] args = {path};
+        String[] args = {path,position+""};
         mListener.onCancionesFragmentInteraction(this,REQUEST_SONG_PATH,args);
+    }
+
+    public String getCancionPos(int pos){
+        try {
+            View v = adapter.getView(pos, null, lvCanciones);
+            if (v == null) {
+                return null;
+            } else {
+                return (String) v.getTag();
+            }
+        } catch (Exception e){
+            return null;
+        }
     }
 
     @Override
@@ -238,34 +251,6 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
                     });
                 } else {
                     //TODO error
-                }
-            } else if (mReqId == DoHTTPRequest.GET_CANCIONES_LISTA){
-                Log.d("GET_CANCIONES_LISTA", output);
-                JSONObject json = new JSONObject(output);
-                String status = json.getString("status");
-                if (status.equals("ok")) {
-                    JSONArray jsonArray = json.getJSONArray("canciones");
-                    JSONObject jsonObj;
-                    arrayCanciones = new ArrayList<>();
-                    Cancion can;
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        jsonObj = jsonArray.getJSONObject(i);
-                        int idCan = Integer.parseInt(jsonObj.getString("id"));
-                        String nombreCan = jsonObj.getString("nombre");
-                        String pathCan = jsonObj.getString("path");
-                        String duracionCan = jsonObj.getString("duracion");
-
-                        can = new Cancion(idCan,nombreCan,pathCan,duracionCan);
-
-                        arrayCanciones.add(can);
-                    }
-                    adapter = new CancionesArrayAdapter(getActivity(),arrayCanciones);
-                    lvCanciones.setAdapter(adapter);
-                } else {
-                    //TODO error
-                    arrayCanciones = new ArrayList<>();
-                    adapter = new CancionesArrayAdapter(getActivity(),arrayCanciones);
-                    lvCanciones.setAdapter(adapter);
                 }
             } else if (mReqId == DoHTTPRequest.GET_CANCIONES_LISTA){
                 Log.d("GET_CANCIONES_LISTA", output);

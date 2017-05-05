@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.os.Handler;
 import android.support.v4.app.FragmentTabHost;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,34 +25,17 @@ import java.io.IOException;
 import frags.CancionesFragment;
 import frags.DownloadFragment;
 import frags.ListasFragment;
+import model.MyReproductor;
 
 public class ReproductorActivity extends AppCompatActivity
         implements CancionesFragment.OnCancionesFragmentInteractionListener,
         ListasFragment.OnListasFragmentInteractionListener,
         DownloadFragment.OnDownloadFragmentInteractionListener{
 
-    private static final int UPDATE_FREQUENCY = 500;
-    private static final int STEP_VALUE = 4000;
-
-    private boolean isMovingSeekBar = false;
-
-    private boolean isStarted = true;
-
     private FragmentTabHost tabHost;
     private final String TAG = "ReproductorActivity";
-    private MediaPlayer player = null;
-    private int repeatState;
-    private boolean esAleatorio;
-
-    private final Runnable updatePositinRunnable = new Runnable() {
-        @Override
-        public void run() {
-            updatePosition();
-        }
-    };
 
     private TextView selectedFile;
-    private String currentFile = "";
 
     private SeekBar seekBar;
     private ImageButton prev;
@@ -61,11 +43,6 @@ public class ReproductorActivity extends AppCompatActivity
     private ImageButton next;
     private ImageButton repeat;
     private ImageButton rand;
-    private final Handler handler = new Handler();
-
-    private static final int REPETIR_TODAS = 100;
-    private static final int REPETIR_CANCION = 101;
-    private static final int NO_REPETIR = 102;
 
     private String user;
 
@@ -76,7 +53,6 @@ public class ReproductorActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(updatePositinRunnable);
     }
 
     @Override
@@ -121,9 +97,7 @@ public class ReproductorActivity extends AppCompatActivity
             return;
         }
 
-        if(player==null){
-            player = new MediaPlayer();
-        }
+        MediaPlayer player = MyReproductor.getMr().player;
 
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -137,30 +111,29 @@ public class ReproductorActivity extends AppCompatActivity
                 return false;
             }
         });
+
         seekBar =(SeekBar)findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(isMovingSeekBar){
-                    player.seekTo(progress);
+                if(MyReproductor.getMr().isMovingSeekBar){
+                    MyReproductor.getMr().player.seekTo(progress);
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                isMovingSeekBar = true;
+                MyReproductor.getMr().isMovingSeekBar = true;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                isMovingSeekBar = false;
+                MyReproductor.getMr().isMovingSeekBar = false;
             }
         });
 
-        repeatState = NO_REPETIR;
-        esAleatorio = false;
-
         selectedFile = (TextView) findViewById(R.id.selecteditem);
+        selectedFile.setTextColor(Color.RED);
 
         prev = (ImageButton)findViewById(R.id.previous);
         prev.setOnClickListener(new View.OnClickListener() {
@@ -201,6 +174,46 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickRand(v);
             }
         });
+
+        MyReproductor.getMr().seekBar = seekBar;
+
+        if(MyReproductor.getMr().isStateSaved){
+            selectedFile.setText(MyReproductor.getMr().currentFile);
+            if(MyReproductor.getMr().isFileOk){
+                selectedFile.setTextColor(Color.BLACK);
+            } else {
+                selectedFile.setTextColor(Color.RED);
+            }
+
+            if(MyReproductor.getMr().player.isPlaying()){
+                play.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
+                play.setImageResource(android.R.drawable.ic_media_pause);
+            } else {
+                play.getBackground().setTint(getResources().getColor(R.color.superBlue,null));
+                play.setImageResource(android.R.drawable.ic_media_play);
+            }
+
+            if(MyReproductor.getMr().esAleatorio){
+                rand.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
+            } else{
+                rand.getBackground().setTint(getResources().getColor(R.color.superBlue,null));
+            }
+
+            if(MyReproductor.getMr().repeatState == MyReproductor.NO_REPETIR){
+                repeat.getBackground().setTint(getResources().getColor(R.color.superBlue,null));
+            } else if(MyReproductor.getMr().repeatState == MyReproductor.REPETIR_TODAS){
+                repeat.getBackground().setTint(getResources().getColor(R.color.nanoBlue,null));
+            } else if(MyReproductor.getMr().repeatState == MyReproductor.REPETIR_CANCION){
+                repeat.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
+            }
+
+            if(MyReproductor.getMr().isStarted){
+                seekBar.setMax(MyReproductor.getMr().player.getDuration());
+                seekBar.setProgress(MyReproductor.getMr().player.getCurrentPosition());
+            }
+        } else {
+            MyReproductor.getMr().isStateSaved = true;
+        }
     }
 
     @Override
@@ -231,38 +244,39 @@ public class ReproductorActivity extends AppCompatActivity
         //mostrar actividad principal (login y registro)
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
-        handler.removeCallbacks(updatePositinRunnable);
-        player.stop();
-        player.reset();
-        player.release();
-        player = null;
+        MyReproductor.getMr().handler.removeCallbacks(MyReproductor.getMr().updatePositinRunnable);
+        MyReproductor.getMr().player.stop();
+        MyReproductor.getMr().player.reset();
+        MyReproductor.getMr().player.release();
+        MyReproductor.getMr().player = null;
+        MyReproductor.destroy();
         finish();
     }
 
     private void onClickPrev(View v) {
-        if(!currentFile.equals("")) {
-            int seekto = player.getCurrentPosition() - STEP_VALUE;
+        if(!MyReproductor.getMr().currentFile.equals("")) {
+            int seekto = MyReproductor.getMr().player.getCurrentPosition() - MyReproductor.STEP_VALUE;
             if (seekto < 0)
                 seekto = 0;
-            player.pause();
-            player.seekTo(seekto);
-            player.start();
+            MyReproductor.getMr().player.pause();
+            MyReproductor.getMr().player.seekTo(seekto);
+            MyReproductor.getMr().player.start();
         }
     }
 
     private void onClickPlay(View v) {
-        if(!currentFile.equals("")){
-            if(player.isPlaying()){
-                handler.removeCallbacks(updatePositinRunnable);
-                player.pause();
+        if(!MyReproductor.getMr().currentFile.equals("")){
+            if(MyReproductor.getMr().player.isPlaying()){
+                MyReproductor.getMr().handler.removeCallbacks(MyReproductor.getMr().updatePositinRunnable);
+                MyReproductor.getMr().player.pause();
                 play.getBackground().setTint(getResources().getColor(R.color.superBlue,null));
                 play.setImageResource(android.R.drawable.ic_media_play);
             }else{
-                if(isStarted){
-                    player.start();
+                if(MyReproductor.getMr().isStarted){
+                    MyReproductor.getMr().player.start();
                     play.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
                     play.setImageResource(android.R.drawable.ic_media_pause);
-                    updatePosition();
+                    MyReproductor.getMr().updatePosition();
                 }else{
                     startPlay();
                 }
@@ -271,37 +285,37 @@ public class ReproductorActivity extends AppCompatActivity
     }
 
     private void onClickNext(View v) {
-        if(!currentFile.equals("")) {
-            int seekto = player.getCurrentPosition() + STEP_VALUE;
-            if (seekto > player.getDuration())
-                seekto = player.getDuration();
-            player.pause();
-            player.seekTo(seekto);
-            player.start();
+        if(!MyReproductor.getMr().currentFile.equals("")) {
+            int seekto = MyReproductor.getMr().player.getCurrentPosition() + MyReproductor.STEP_VALUE;
+            if (seekto > MyReproductor.getMr().player.getDuration())
+                seekto = MyReproductor.getMr().player.getDuration();
+            MyReproductor.getMr().player.pause();
+            MyReproductor.getMr().player.seekTo(seekto);
+            MyReproductor.getMr().player.start();
         }
     }
 
     private void onClickRepeat(View v) {
-        if(this.repeatState == this.NO_REPETIR){
-            this.repeatState = this.REPETIR_TODAS;
+        if(MyReproductor.getMr().repeatState == MyReproductor.NO_REPETIR){
+            MyReproductor.getMr().repeatState = MyReproductor.REPETIR_TODAS;
             repeat.getBackground().setTint(getResources().getColor(R.color.nanoBlue,null));
             Toast.makeText(this,getResources().getString(R.string.rep_todas),Toast.LENGTH_SHORT).show();
 
-        } else if(this.repeatState == this.REPETIR_TODAS){
-            this.repeatState = this.REPETIR_CANCION;
+        } else if(MyReproductor.getMr().repeatState == MyReproductor.REPETIR_TODAS){
+            MyReproductor.getMr().repeatState = MyReproductor.REPETIR_CANCION;
             repeat.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
             Toast.makeText(this,getResources().getString(R.string.rep_cancion),Toast.LENGTH_SHORT).show();
 
-        } else if(this.repeatState == this.REPETIR_CANCION){
-            this.repeatState = this.NO_REPETIR;
+        } else if(MyReproductor.getMr().repeatState == MyReproductor.REPETIR_CANCION){
+            MyReproductor.getMr().repeatState = MyReproductor.NO_REPETIR;
             repeat.getBackground().setTint(getResources().getColor(R.color.superBlue,null));
             Toast.makeText(this,getResources().getString(R.string.rep_no),Toast.LENGTH_SHORT).show();
         }
     }
 
     private void onClickRand(View v) {
-        this.esAleatorio = !this.esAleatorio;
-        if(this.esAleatorio){
+        MyReproductor.getMr().esAleatorio = !MyReproductor.getMr().esAleatorio;
+        if(MyReproductor.getMr().esAleatorio){
             rand.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
             Toast.makeText(this,getResources().getString(R.string.random_yes),Toast.LENGTH_SHORT).show();
         } else{
@@ -311,21 +325,35 @@ public class ReproductorActivity extends AppCompatActivity
     }
 
     private void gestorAlCompletar(MediaPlayer mp){
-        if(esAleatorio){
-            if(repeatState==REPETIR_CANCION){
+        if(MyReproductor.getMr().esAleatorio){
+            if(MyReproductor.getMr().repeatState==MyReproductor.REPETIR_CANCION){
                 stopPlay();
                 startPlay();
             } else {
                 stopPlay();
-                currentFile = cancionesFragment.getCancionAleatoria();
+                MyReproductor.getMr().currentFile = cancionesFragment.getCancionAleatoria();
                 startPlay();
             }
         } else {
-            if(repeatState==NO_REPETIR){
+            if(MyReproductor.getMr().repeatState==MyReproductor.NO_REPETIR){
                 stopPlay();
-            } else if(repeatState==REPETIR_TODAS){
+            } else if(MyReproductor.getMr().repeatState==MyReproductor.REPETIR_TODAS){
                 //TODO repetir todas
-            } else if(repeatState==REPETIR_CANCION){
+                posCancion += 1;
+                String canPath = cancionesFragment.getCancionPos(posCancion);
+                stopPlay();
+                if(canPath!=null){
+                    MyReproductor.getMr().currentFile = canPath;
+                    startPlay();
+                } else {
+                    posCancion = 0;
+                    canPath = cancionesFragment.getCancionPos(posCancion);
+                    if(canPath!=null){
+                        MyReproductor.getMr().currentFile = canPath;
+                        startPlay();
+                    }
+                }
+            } else if(MyReproductor.getMr().repeatState==MyReproductor.REPETIR_CANCION){
                 stopPlay();
                 startPlay();
             }
@@ -333,23 +361,25 @@ public class ReproductorActivity extends AppCompatActivity
     }
 
     private void startPlay() {
-        String file = currentFile;
+        String file = MyReproductor.getMr().currentFile;
+        MyReproductor.getMr().isFileOk = true;
         selectedFile.setTextColor(Color.BLACK);
         selectedFile.setText(file);
         seekBar.setProgress(0);
-        player.stop();
-        player.reset();
+        MyReproductor.getMr().player.stop();
+        MyReproductor.getMr().player.reset();
 
         try{
-            player.setDataSource(file);
-            player.prepare();
-            player.start();
-            seekBar.setMax(player.getDuration());
+            MyReproductor.getMr().player.setDataSource(file);
+            MyReproductor.getMr().player.prepare();
+            MyReproductor.getMr().player.start();
+            seekBar.setMax(MyReproductor.getMr().player.getDuration());
             play.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
             play.setImageResource(android.R.drawable.ic_media_pause);
-            updatePosition();
-            isStarted = true;
+            MyReproductor.getMr().updatePosition();
+            MyReproductor.getMr().isStarted = true;
         }catch (IOException e){
+            MyReproductor.getMr().isFileOk = false;
             selectedFile.setTextColor(Color.RED);
             e.printStackTrace();
         }catch (Exception e){
@@ -358,19 +388,13 @@ public class ReproductorActivity extends AppCompatActivity
     }
 
     private void stopPlay(){
-        player.stop();
-        player.reset();
+        MyReproductor.getMr().player.stop();
+        MyReproductor.getMr().player.reset();
         play.getBackground().setTint(getResources().getColor(R.color.superBlue,null));
         play.setImageResource(android.R.drawable.ic_media_play);
-        handler.removeCallbacks(updatePositinRunnable);
+        MyReproductor.getMr().handler.removeCallbacks(MyReproductor.getMr().updatePositinRunnable);
         seekBar.setProgress(0);
-        isStarted = false;
-    }
-
-    private void updatePosition() {
-        handler.removeCallbacks(updatePositinRunnable);
-        seekBar.setProgress(player.getCurrentPosition());
-        handler.postDelayed(updatePositinRunnable,UPDATE_FREQUENCY);
+        MyReproductor.getMr().isStarted = false;
     }
 
     @Override
@@ -391,6 +415,8 @@ public class ReproductorActivity extends AppCompatActivity
         }
     }
 
+    private int posCancion = 0;
+
     @Override
     public void onCancionesFragmentInteraction(CancionesFragment frag, int mreqid, String[] args) {
         Log.d(TAG,"onCancionesFragmentInteraction");
@@ -399,7 +425,8 @@ public class ReproductorActivity extends AppCompatActivity
             cancionesFragment.actualizarFragment(user);
         }
         else if(mreqid == CancionesFragment.REQUEST_SONG_PATH){
-            currentFile = args[0];
+            MyReproductor.getMr().currentFile = args[0];
+            posCancion = Integer.parseInt(args[1]);
             startPlay();
         }
     }
