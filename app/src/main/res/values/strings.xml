@@ -55,5 +55,6 @@
     <string name="spin_all_canciones">ALL</string>
     <string name="it_quitar_de_lista">Remove from list</string>
     <string name="it_add_a_lista">Add to list</string>
+    <string name="it_download">Download</string>
 
 </resources>

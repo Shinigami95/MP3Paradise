@@ -47,6 +47,7 @@ public interface AsyncResponse {
     public static final int ADD_CANCION_LISTA = 106;
     public static final int DELETE_CANCION_LISTA = 107;
     public static final int GET_CANCIONES_LISTA = 108;
+    public static final int GET_DOWNLOAD_PATH = 108;
 
 
     public DoHTTPRequest(AsyncResponse deleg, Context context, int progressBarId) {
@@ -137,6 +138,22 @@ public interface AsyncResponse {
             mReqId = DELETE_CANCION_LISTA;
             param = "func=delete_cancion_lista";
             param += "&id_cancion=" + URLEncoder.encode(idCancion+"", "UTF-8");
+        } catch(UnsupportedEncodingException e){
+
+        }
+    }
+
+    public void prepComandGetDownloadList(){
+        mReqId = GET_DOWNLOAD_LIST;
+        param = "func=get_download_lista";
+    }
+
+    public void prepComandGetDownloadPath(int idCancion, String user){
+        try {
+            mReqId = GET_DOWNLOAD_PATH;
+            param = "func=get_download_path";
+            param += "&id_cancion=" + URLEncoder.encode(idCancion+"", "UTF-8");
+            param += "&user=" + URLEncoder.encode(user+"", "UTF-8");
         } catch(UnsupportedEncodingException e){
 
         }
