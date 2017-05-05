@@ -119,6 +119,30 @@ public interface AsyncResponse {
         }
     }
 
+    public void prepComandAddCancionLista(int idLista, String nombre, String path, String duracion){
+        try {
+            mReqId = ADD_CANCION_LISTA;
+            param = "func=add_cancion_lista";
+            param += "&id_lista=" + URLEncoder.encode(idLista+"", "UTF-8");
+            param += "&nombre=" + URLEncoder.encode(nombre+"", "UTF-8");
+            param += "&path=" + URLEncoder.encode(path+"", "UTF-8");
+            param += "&duracion=" + URLEncoder.encode(duracion+"", "UTF-8");
+        } catch(UnsupportedEncodingException e){
+
+        }
+    }
+
+    public void prepComandDeleteCancionLista(int idCancion){
+        try {
+            mReqId = DELETE_CANCION_LISTA;
+            param = "func=delete_cancion_lista";
+            param += "&id_cancion=" + URLEncoder.encode(idCancion+"", "UTF-8");
+        } catch(UnsupportedEncodingException e){
+
+        }
+    }
+
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();

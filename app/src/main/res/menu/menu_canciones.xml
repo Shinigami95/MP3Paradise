@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/it_add_a_lista"
+        android:title="@string/it_add_a_lista" />
+    <item
+        android:id="@+id/it_quitar_de_lista"
+        android:title="@string/it_quitar_de_lista" />
+</menu>
