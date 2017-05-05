@@ -49,5 +49,9 @@
     <string name="cancel">Cancel</string>
 
     <string name="error_nombre_lista_vavio">List name cannot be empty</string>
+    <string name="it_eliminar_lista">Delete list</string>
+
+
+    <string name="spin_all_canciones">ALL</string>
 
 </resources>

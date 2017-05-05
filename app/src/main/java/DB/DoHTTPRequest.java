@@ -99,6 +99,26 @@ public interface AsyncResponse {
         }
     }
 
+    public void prepComandDeleteLista(int idLista){
+        try {
+            mReqId = DELETE_LISTA;
+            param = "func=delete_lista";
+            param += "&id_lista=" + URLEncoder.encode(idLista+"", "UTF-8");
+        } catch(UnsupportedEncodingException e){
+
+        }
+    }
+
+    public void prepComandGetCancionesLista(int idLista){
+        try {
+            mReqId = GET_CANCIONES_LISTA;
+            param = "func=get_canciones_lista";
+            param += "&id_lista=" + URLEncoder.encode(idLista+"", "UTF-8");
+        } catch(UnsupportedEncodingException e){
+
+        }
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();

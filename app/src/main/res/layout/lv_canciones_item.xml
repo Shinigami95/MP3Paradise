@@ -11,15 +11,15 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:text="New Text"
-        android:textSize="20dp" />
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="0.97"
         android:ellipsize="end"
         android:gravity="right"
-        android:textSize="18dp"
-        android:layout_weight="0.97" />
+        android:textSize="16dp" />
 
 </LinearLayout>

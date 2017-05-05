@@ -8,11 +8,13 @@
         android:id="@+id/tv_nombre_lista"
         android:layout_width="285dp"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/tv_num_canciones"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="16dp" />
 </LinearLayout>

@@ -4,9 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -58,7 +62,40 @@ public class ListasFragment extends Fragment implements DoHTTPRequest.AsyncRespo
         laa = new ListasArrayAdapter(getActivity(),arrayListas);
         lvListas = (ListView) v.findViewById(R.id.lv_lists);
         lvListas.setAdapter(laa);
+        registerForContextMenu(lvListas);
         return v;
+    }
+
+    //Menu contextual que aparece al hacer click largo en un centro del list view (opciones eliminar y modificar)
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_lista_canciones, menu);
+    }
+
+    //Detectar si se ha pulsado eliminar en el menu contextual
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()){
+            case R.id.it_eliminar_lista:
+                eliminarLista(info.position);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    int posAEliminar = -1;
+    private void eliminarLista(int pos){
+        if(posAEliminar==-1) {
+            posAEliminar = pos;
+            int idLista = arrayListas.get(pos).id;
+            DoHTTPRequest doHTTP = new DoHTTPRequest(this, getActivity(), -1);
+            doHTTP.prepComandDeleteLista(idLista);
+            doHTTP.execute();
+        }
     }
 
     private void createNewList(View v){
@@ -156,6 +193,18 @@ public class ListasFragment extends Fragment implements DoHTTPRequest.AsyncRespo
                     //TODO mostrar mensaje error
                     Log.d("GET_LISTAS_USU","ERROR: "+output);
                 }
+            } else if (mReqId == DoHTTPRequest.DELETE_LISTA) {
+                Log.d("DELETE_LISTA",output);
+                JSONObject json = new JSONObject(output);
+                String status = json.getString("status");
+                if(status.equals("ok")){
+                    arrayListas.remove(posAEliminar);
+                    laa.notifyDataSetChanged();
+                } else {
+                    //TODO mostrar mensaje error
+                    Log.d("DELETE_LISTA","ERROR: "+output);
+                }
+                posAEliminar = -1;
             }
         } catch(JSONException e){
             e.printStackTrace();

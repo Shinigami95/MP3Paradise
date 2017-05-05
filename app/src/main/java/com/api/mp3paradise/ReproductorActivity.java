@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v4.app.FragmentTabHost;
@@ -17,9 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 import frags.CancionesFragment;
 import frags.DownloadFragment;
@@ -314,7 +316,6 @@ public class ReproductorActivity extends AppCompatActivity
                 stopPlay();
                 startPlay();
             } else {
-                //TODO get aleatoria
                 stopPlay();
                 currentFile = cancionesFragment.getCancionAleatoria();
                 startPlay();
@@ -333,6 +334,7 @@ public class ReproductorActivity extends AppCompatActivity
 
     private void startPlay() {
         String file = currentFile;
+        selectedFile.setTextColor(Color.BLACK);
         selectedFile.setText(file);
         seekBar.setProgress(0);
         player.stop();
@@ -342,14 +344,17 @@ public class ReproductorActivity extends AppCompatActivity
             player.setDataSource(file);
             player.prepare();
             player.start();
+            seekBar.setMax(player.getDuration());
+            play.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
+            play.setImageResource(android.R.drawable.ic_media_pause);
+            updatePosition();
+            isStarted = true;
+        }catch (IOException e){
+            selectedFile.setTextColor(Color.RED);
+            e.printStackTrace();
         }catch (Exception e){
             e.printStackTrace();
         }
-        seekBar.setMax(player.getDuration());
-        play.getBackground().setTint(getResources().getColor(R.color.miniBlue,null));
-        play.setImageResource(android.R.drawable.ic_media_pause);
-        updatePosition();
-        isStarted = true;
     }
 
     private void stopPlay(){
@@ -382,6 +387,7 @@ public class ReproductorActivity extends AppCompatActivity
         Log.d(TAG,"onDownloadFragmentInteraction");
         if(mreqid == CancionesFragment.REQUEST_INIT){
             downloadFragment = frag;
+            downloadFragment.actualizarFragment(user);
         }
     }
 
@@ -390,6 +396,7 @@ public class ReproductorActivity extends AppCompatActivity
         Log.d(TAG,"onCancionesFragmentInteraction");
         if(mreqid == CancionesFragment.REQUEST_INIT){
             cancionesFragment = frag;
+            cancionesFragment.actualizarFragment(user);
         }
         else if(mreqid == CancionesFragment.REQUEST_SONG_PATH){
             currentFile = args[0];
