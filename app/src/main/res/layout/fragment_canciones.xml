@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.api.mp3paradise.CancionesFragment">
+    tools:context="com.api.mp3paradise.frags.CancionesFragment">
 
     <LinearLayout
         android:id="@+id/tab1"

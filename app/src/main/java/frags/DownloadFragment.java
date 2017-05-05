@@ -1,4 +1,4 @@
-package com.api.mp3paradise;
+package frags;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,11 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ListasFragment extends Fragment {
+import com.api.mp3paradise.R;
 
-    private OnListasFragmentInteractionListener mListener;
+public class DownloadFragment extends Fragment {
 
-    public ListasFragment() {}
+    private OnDownloadFragmentInteractionListener mListener;
+
+    private String user;
+
+    public static final int REQUEST_INIT = 300;
+
+    public DownloadFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,16 +27,16 @@ public class ListasFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_listas, container, false);
+        View v = inflater.inflate(R.layout.fragment_download, container, false);
         return v;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof OnListasFragmentInteractionListener) {
-            mListener = (OnListasFragmentInteractionListener) getActivity();
-            mListener.onListasFragmentInteraction();
+        if (getActivity() instanceof OnDownloadFragmentInteractionListener) {
+            mListener = (OnDownloadFragmentInteractionListener) getActivity();
+            mListener.onDownloadFragmentInteraction(this,REQUEST_INIT,null);
         } else {
             throw new RuntimeException(getActivity().toString()
                     + " must implement OnInfoCentroFragmentInteractionListener");
@@ -40,8 +46,8 @@ public class ListasFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListasFragmentInteractionListener) {
-            mListener = (OnListasFragmentInteractionListener) context;
+        if (context instanceof OnDownloadFragmentInteractionListener) {
+            mListener = (OnDownloadFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -54,7 +60,12 @@ public class ListasFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnListasFragmentInteractionListener {
-        void onListasFragmentInteraction();
+    public void actualizarFragment(String u){
+        user = u;
+
+    }
+
+    public interface OnDownloadFragmentInteractionListener {
+        void onDownloadFragmentInteraction(DownloadFragment frag, int mreqid, String[] args);
     }
 }

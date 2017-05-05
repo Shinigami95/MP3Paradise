@@ -40,163 +40,60 @@ public interface AsyncResponse {
 
     public static final int LOG_IN = 100;
     public static final int REGISTER = 101;
-    public static final int GET_LISTA_CENTROS = 102;
-    public static final int GET_INFO_CENTRO = 103;
-    public static final int GET_CARRERAS_CENTRO = 104;
-    public static final int ADD_CENTRO = 105;
-    public static final int ADD_CARRERA = 106;
-    public static final int DELETE_CENTRO = 107;
-    public static final int DELETE_CARRERA = 108;
-    public static final int MODIFICAR_CENTRO = 109;
-    public static final int GET_INFO_USER = 110;
-    public static final int ADD_FOTO_USER = 111;
-    public static final int GET_FOTO = 112;
+    public static final int GET_LISTAS_USU = 102;
+    public static final int GET_DOWNLOAD_LIST = 103;
+    public static final int ADD_LISTA = 104;
+    public static final int DELETE_LISTA = 105;
+    public static final int ADD_CANCION_LISTA = 106;
+    public static final int DELETE_CANCION_LISTA = 107;
+    public static final int GET_CANCIONES_LISTA = 108;
+
 
     public DoHTTPRequest(AsyncResponse deleg, Context context, int progressBarId) {
-
         delegate = deleg;
         mContext = context;
         mProgressBarId = progressBarId;
         errorMessage = "";
-
     }
 
-    public void prepComandAddFotoUser(String nombre, String foto){
-        try {
-            mReqId = ADD_FOTO_USER;
-            param = "func=addFotoUser";
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
-            param += "&foto=" + URLEncoder.encode(foto, "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandGetFoto(String path){
-        try {
-            mReqId = GET_FOTO;
-            param = "func=getFoto";
-            param += "&path=" + URLEncoder.encode(path, "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandLogin(String nombre, String pass){
+    public void prepComandLogin(String user, String pass){
         try {
             mReqId = LOG_IN;
             param = "func=login";
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
+            param += "&user=" + URLEncoder.encode(user, "UTF-8");
             param += "&pass=" + URLEncoder.encode(pass, "UTF-8");
         } catch(UnsupportedEncodingException e){
 
         }
     }
 
-    public void prepComandGetInfoUser(String nombre){
-        try {
-            mReqId = GET_INFO_USER;
-            param = "func=getInfoUser";
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandRegister(String nombre, String pass, String fechanacimiento, String email){
+    public void prepComandRegister(String user, String pass){
         try {
             mReqId = REGISTER;
             param = "func=register";
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
+            param += "&user=" + URLEncoder.encode(user, "UTF-8");
             param += "&pass=" + URLEncoder.encode(pass, "UTF-8");
-            param += "&fechanacimiento=" + URLEncoder.encode(fechanacimiento, "UTF-8");
-            param += "&email=" + URLEncoder.encode(email, "UTF-8");
         } catch(UnsupportedEncodingException e){
 
         }
     }
 
-    public void prepComandGetListaCentros(){
-        mReqId = GET_LISTA_CENTROS;
-        param = "func=getListaCentros";
-    }
-
-    public void prepComandGetInfoCentro(String id){
+    public void prepComandGetListasUsu(String user){
         try {
-            mReqId = GET_INFO_CENTRO;
-            param = "func=getInfoCentro";
-            param += "&id=" + URLEncoder.encode(id, "UTF-8");
+            mReqId = GET_LISTAS_USU;
+            param = "func=get_listas_usu";
+            param += "&user=" + URLEncoder.encode(user, "UTF-8");
         } catch(UnsupportedEncodingException e){
 
         }
     }
 
-    public void prepComandGetCarrerasCentro(String id){
-        try{
-            mReqId = GET_CARRERAS_CENTRO;
-            param = "func=getCarrerasCentro";
-            param += "&id=" + URLEncoder.encode(id, "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandAddCentro(String nombre, String siglas, String url, double lat, double lon){
+    public void prepComandAddLista(String user, String nombreLista){
         try {
-            mReqId = ADD_CENTRO;
-            param = "func=addCentro";
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
-            param += "&siglas=" + URLEncoder.encode(siglas, "UTF-8");
-            param += "&url=" + URLEncoder.encode(url, "UTF-8");
-            param += "&lat=" + URLEncoder.encode(lat+"", "UTF-8");
-            param += "&lon=" + URLEncoder.encode(lon+"", "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandAddCarrera(String nombre, String centro, String fechamatricula){
-        try {
-            mReqId = ADD_CARRERA;
-            param = "func=addCarrera";
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
-            param += "&centro=" + URLEncoder.encode(centro, "UTF-8");
-            param += "&fechamatricula=" + URLEncoder.encode(fechamatricula, "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandDeleteCentro(String id){
-        try {
-            mReqId = DELETE_CENTRO;
-            param = "func=deleteCentro";
-            param += "&id=" + URLEncoder.encode(id+"", "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandDeleteCarrera(String id){
-        try {
-            mReqId = DELETE_CARRERA;
-            param = "func=deleteCarrera";
-            param += "&id=" + URLEncoder.encode(id, "UTF-8");
-        } catch(UnsupportedEncodingException e){
-
-        }
-    }
-
-    public void prepComandModificarCentro(String id, String nombre, String siglas, String url, double lat, double lon){
-        try {
-            mReqId = MODIFICAR_CENTRO;
-            param = "func=modificarCentro";
-            param += "&id=" + URLEncoder.encode(id, "UTF-8");
-            param += "&nombre=" + URLEncoder.encode(nombre, "UTF-8");
-            param += "&siglas=" + URLEncoder.encode(siglas, "UTF-8");
-            param += "&url=" + URLEncoder.encode(url, "UTF-8");
-            param += "&lat=" + URLEncoder.encode(lat+"", "UTF-8");
-            param += "&lon=" + URLEncoder.encode(lon+""+"", "UTF-8");
+            mReqId = ADD_LISTA;
+            param = "func=add_lista";
+            param += "&user=" + URLEncoder.encode(user, "UTF-8");
+            param += "&nombre_lista=" + URLEncoder.encode(nombreLista, "UTF-8");
         } catch(UnsupportedEncodingException e){
 
         }
@@ -223,7 +120,7 @@ public interface AsyncResponse {
             return errorMessage;
         }
 
-        String targetURLstr = "http://galan.ehu.eus/jperez134/WEB/index_gcu.php";
+        String targetURLstr = "http://galan.ehu.eus/jperez134/WEB/mp3paradise/indexmp3paradise.php";
         InputStream inputStream;
         try {
             URL targetURL = new URL(targetURLstr);

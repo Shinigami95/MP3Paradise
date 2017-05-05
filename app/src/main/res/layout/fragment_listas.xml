@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.api.mp3paradise.ListasFragment">
+    tools:context="com.api.mp3paradise.frags.ListasFragment">
 
     <LinearLayout
         android:id="@+id/tab2"
@@ -14,7 +14,7 @@
             android:id="@+id/bt_new_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="@string/but_new_lista" />
 
         <ListView
             android:id="@+id/lv_lists"

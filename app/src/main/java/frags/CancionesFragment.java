@@ -1,4 +1,4 @@
-package com.api.mp3paradise;
+package frags;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import adapters.MediaCursorAdapter;
+import com.api.mp3paradise.R;
+
 import java.util.Random;
 
 public class CancionesFragment extends Fragment {
@@ -19,6 +22,8 @@ public class CancionesFragment extends Fragment {
     private OnCancionesFragmentInteractionListener mListener;
     private ListView lvCanciones;
     private ListAdapter adapter;
+
+    private String user;
 
     public static final int REQUEST_INIT = 300;
     public static final int REQUEST_SONG_PATH = 301;
@@ -61,7 +66,7 @@ public class CancionesFragment extends Fragment {
 
             if(cursor!= null){
                 cursor.moveToFirst();
-                adapter = new MediaCursorAdapter(getContext(),R.layout.lv_item ,cursor);
+                adapter = new MediaCursorAdapter(getContext(),R.layout.lv_canciones_item,cursor);
                 lvCanciones.setAdapter(adapter);
             }
         } else {
@@ -93,6 +98,11 @@ public class CancionesFragment extends Fragment {
         View v = adapter.getView(pos,null,lvCanciones);
         String path = (String) v.getTag();
         return path;
+    }
+
+    public void actualizarFragment(String u){
+        user = u;
+
     }
 
     public interface OnCancionesFragmentInteractionListener {

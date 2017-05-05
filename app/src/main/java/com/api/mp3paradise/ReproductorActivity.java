@@ -2,25 +2,28 @@ package com.api.mp3paradise;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import frags.CancionesFragment;
+import frags.DownloadFragment;
+import frags.ListasFragment;
 
 public class ReproductorActivity extends AppCompatActivity
         implements CancionesFragment.OnCancionesFragmentInteractionListener,
@@ -64,20 +67,33 @@ public class ReproductorActivity extends AppCompatActivity
 
     private String user;
 
+    private CancionesFragment cancionesFragment;
+    private ListasFragment listasFragment;
+    private DownloadFragment downloadFragment;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(updatePositinRunnable);
-        player.stop();
-        player.reset();
-        player.release();
-        player = null;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_reproductor);
+        Bundle ext = getIntent().getExtras();
+        if(ext!=null){
+            user = ext.getString("user");
+            //guardar usuario registrado en preferencias
+            SharedPreferences prefs = getSharedPreferences("mp3paradise_preferences", Context.MODE_APPEND);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("user_actual",user);
+            editor.apply();
+
+            setTitle(getTitle().toString()+ " - "+ user);
+        }
+
         tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(this,
                 getSupportFragmentManager(),android.R.id.tabcontent);
@@ -93,6 +109,7 @@ public class ReproductorActivity extends AppCompatActivity
                 tabHost.newTabSpec("tab3")
                         .setIndicator(getResources().getString(R.string.tab_downloads)),
                 DownloadFragment.class, null);
+
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             if (shouldShowRequestPermissionRationale(
@@ -100,12 +117,6 @@ public class ReproductorActivity extends AppCompatActivity
             }
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
             return;
-        }
-
-        Bundle ext = getIntent().getExtras();
-        if(ext!=null){
-            user = ext.getString("user");
-            setTitle(getTitle().toString()+ " - "+ user);
         }
 
         if(player==null){
@@ -146,7 +157,7 @@ public class ReproductorActivity extends AppCompatActivity
 
         repeatState = NO_REPETIR;
         esAleatorio = false;
-        
+
         selectedFile = (TextView) findViewById(R.id.selecteditem);
 
         prev = (ImageButton)findViewById(R.id.previous);
@@ -188,6 +199,42 @@ public class ReproductorActivity extends AppCompatActivity
                 onClickRand(v);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_user,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //detectar que se ha pulsado cerrar sesion en el menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.it_cerrar_sesion:
+                cerrarSesion();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void cerrarSesion(){
+        //borrar preferencia
+        SharedPreferences prefs = getSharedPreferences("mp3paradise_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove("user_actual");
+        editor.apply();
+        //mostrar actividad principal (login y registro)
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        handler.removeCallbacks(updatePositinRunnable);
+        player.stop();
+        player.reset();
+        player.release();
+        player = null;
+        finish();
     }
 
     private void onClickPrev(View v) {
@@ -322,17 +369,22 @@ public class ReproductorActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListasFragmentInteraction() {
+    public void onListasFragmentInteraction(ListasFragment frag, int mreqid, String[] args) {
         Log.d(TAG,"onListasFragmentInteraction");
+        if(mreqid == CancionesFragment.REQUEST_INIT){
+            listasFragment = frag;
+            listasFragment.actualizarFragment(user);
+        }
     }
 
     @Override
-    public void onDownloadFragmentInteraction() {
+    public void onDownloadFragmentInteraction(DownloadFragment frag, int mreqid, String[] args) {
         Log.d(TAG,"onDownloadFragmentInteraction");
+        if(mreqid == CancionesFragment.REQUEST_INIT){
+            downloadFragment = frag;
+        }
     }
 
-
-    CancionesFragment cancionesFragment;
     @Override
     public void onCancionesFragmentInteraction(CancionesFragment frag, int mreqid, String[] args) {
         Log.d(TAG,"onCancionesFragmentInteraction");

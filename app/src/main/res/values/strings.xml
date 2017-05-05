@@ -39,4 +39,15 @@
     <string name="rep_cancion">Repetir canción</string>
 
 
+    <string name="error_rep_pass">Passwords are not the same</string>
+    <string name="error_user_vacio">User cannot be empty</string>
+    <string name="it_cerrar_sesion">Log out</string>
+    <string name="but_new_lista">New List</string>
+    <string name="et_nombre_lista">List name</string>
+
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="error_nombre_lista_vavio">List name cannot be empty</string>
+
 </resources>

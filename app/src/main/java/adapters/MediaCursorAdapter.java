@@ -1,4 +1,4 @@
-package com.api.mp3paradise;
+package adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import com.api.mp3paradise.R;
 
 import java.math.BigDecimal;
 
@@ -37,7 +39,7 @@ public class MediaCursorAdapter extends SimpleCursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.lv_item,parent,false);
+        View v = inflater.inflate(R.layout.lv_canciones_item,parent,false);
         bindView(v,context,cursor);
         return v;
     }
