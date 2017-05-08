@@ -18,6 +18,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import DB.DoHTTPRequest;
 import adapters.CancionesArrayAdapter;
@@ -250,7 +251,7 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
                         }
                     });
                 } else {
-                    //TODO error
+                    Toast.makeText(getContext(),"Error while loading lists",Toast.LENGTH_LONG).show();
                 }
             } else if (mReqId == DoHTTPRequest.GET_CANCIONES_LISTA){
                 Log.d("GET_CANCIONES_LISTA", output);
@@ -275,7 +276,7 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
                     adapter = new CancionesArrayAdapter(getActivity(),arrayCanciones);
                     lvCanciones.setAdapter(adapter);
                 } else {
-                    //TODO error
+                    Toast.makeText(getContext(),"Error while loading the songs of the list",Toast.LENGTH_LONG).show();
                     arrayCanciones = new ArrayList<>();
                     adapter = new CancionesArrayAdapter(getActivity(),arrayCanciones);
                     lvCanciones.setAdapter(adapter);
@@ -285,9 +286,9 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
                 JSONObject json = new JSONObject(output);
                 String status = json.getString("status");
                 if (status.equals("ok")) {
-                    //TODO add correcto
+                    Toast.makeText(getContext(),"Song added to the list ",Toast.LENGTH_LONG).show();
                 } else {
-                    //TODO error
+                    Toast.makeText(getContext(),"Error while adding the song to the list",Toast.LENGTH_LONG).show();
                 }
             }else if (mReqId == DoHTTPRequest.DELETE_CANCION_LISTA){
                 if(adapter instanceof CancionesArrayAdapter){
@@ -299,9 +300,9 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
                 JSONObject json = new JSONObject(output);
                 String status = json.getString("status");
                 if (status.equals("ok")) {
-                    //TODO add correcto
+                    Toast.makeText(getContext(),"Song deleted from the list",Toast.LENGTH_LONG).show();
                 } else {
-                    //TODO error
+                    Toast.makeText(getContext(),"Error while deleting the song from the list",Toast.LENGTH_LONG).show();
                 }
             }
         }catch(JSONException e){
@@ -317,7 +318,6 @@ public class CancionesFragment extends Fragment implements DoHTTPRequest.AsyncRe
             menuState = MENU_ADD_CANCION_LISTA_STATE;
             getActivity().invalidateOptionsMenu();
             getLocalMusic();
-            //TODO lvCanciones.createContextMenu();
         } else {
             menuState = MENU_DELETE_CANCION_LISTA_STATE;
             getActivity().invalidateOptionsMenu();

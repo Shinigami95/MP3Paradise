@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.api.mp3paradise.R;
 
@@ -168,7 +169,7 @@ public class ListasFragment extends Fragment implements DoHTTPRequest.AsyncRespo
                     arrayListas.add(lc);
                     laa.notifyDataSetChanged();
                 } else {
-                    //TODO mostrar mensaje error
+                    Toast.makeText(getContext(),"Error while adding the list",Toast.LENGTH_LONG).show();
                     Log.d("ADD_LISTA","ERROR: "+output);
                 }
             } else if (mReqId == DoHTTPRequest.GET_LISTAS_USU) {
@@ -190,7 +191,7 @@ public class ListasFragment extends Fragment implements DoHTTPRequest.AsyncRespo
                     }
                     laa.notifyDataSetChanged();
                 } else {
-                    //TODO mostrar mensaje error
+                    Toast.makeText(getContext(),"Error while loading the list",Toast.LENGTH_LONG).show();
                     Log.d("GET_LISTAS_USU","ERROR: "+output);
                 }
             } else if (mReqId == DoHTTPRequest.DELETE_LISTA) {
@@ -201,7 +202,7 @@ public class ListasFragment extends Fragment implements DoHTTPRequest.AsyncRespo
                     arrayListas.remove(posAEliminar);
                     laa.notifyDataSetChanged();
                 } else {
-                    //TODO mostrar mensaje error
+                    Toast.makeText(getContext(),"Error while deleting the list",Toast.LENGTH_LONG).show();
                     Log.d("DELETE_LISTA","ERROR: "+output);
                 }
                 posAEliminar = -1;

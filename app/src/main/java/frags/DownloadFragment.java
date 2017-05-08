@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.api.mp3paradise.R;
 
@@ -74,7 +75,6 @@ public class DownloadFragment extends Fragment implements DoHTTPRequest.AsyncRes
         switch (item.getItemId()){
             case R.id.it_download:
                 Log.d("MENUITEM","it_download");
-                // TODO descargar
                 View v = adapterDC.getView(info.position,null,lvDownload);
                 int idCancion = (Integer) v.getTag();
                 DoHTTPRequest doHTTP = new DoHTTPRequest(this,getActivity(),-1);
@@ -146,19 +146,18 @@ public class DownloadFragment extends Fragment implements DoHTTPRequest.AsyncRes
                     adapterDC = new DownloadArrayAdapter(getActivity(),arrayDC);
                     lvDownload.setAdapter(adapterDC);
                 } else {
-                    //TODO error
+                    Toast.makeText(getContext(),"Error while downloading the song",Toast.LENGTH_LONG).show();
                 }
             } else if(mReqId==DoHTTPRequest.GET_DOWNLOAD_PATH){
                 JSONObject json = new JSONObject(output);
                 String status = json.getString("status");
                 if(status.equals("ok")){
                     String nombreFich = json.getString("path");
-                    // TODO empieza la aventura
                     Log.d("DOWNLOAD","A DESCARGAR");
                     DownloadFileFromURL dffurl = new DownloadFileFromURL(getActivity(),nombreFich);
                     dffurl.execute();
                 } else {
-                    //TODO error
+                    Toast.makeText(getContext(),"Error while downloading the song",Toast.LENGTH_LONG).show();
                 }
             }
         } catch (JSONException e){

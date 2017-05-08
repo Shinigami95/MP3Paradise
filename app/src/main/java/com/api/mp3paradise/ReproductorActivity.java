@@ -338,7 +338,6 @@ public class ReproductorActivity extends AppCompatActivity
             if(MyReproductor.getMr().repeatState==MyReproductor.NO_REPETIR){
                 stopPlay();
             } else if(MyReproductor.getMr().repeatState==MyReproductor.REPETIR_TODAS){
-                //TODO repetir todas
                 posCancion += 1;
                 String canPath = cancionesFragment.getCancionPos(posCancion);
                 stopPlay();
