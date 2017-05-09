@@ -65,6 +65,9 @@ public class RegisterActivity extends AppCompatActivity implements DoHTTPRequest
                     setResult(RESULT_OK,i);
                     finish();
                 }
+                else {
+                    Toast.makeText(this,"The username is already in use",Toast.LENGTH_LONG).show();
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

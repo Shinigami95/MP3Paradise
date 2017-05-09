@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -110,6 +111,9 @@ public class MainActivity extends AppCompatActivity implements DoHTTPRequest.Asy
                     i.putExtra("user",user);
                     startActivity(i);
                     finish();
+                }
+                else{
+                    Toast.makeText(this,"Error at the user or the password",Toast.LENGTH_LONG).show();
                 }
             }
         } catch (JSONException e) {
